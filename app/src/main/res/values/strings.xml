@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Laptop Repair App</string>
+    <string name="welcome">Welcome back!</string>
+    <string name="sign_in">Sign in to access your account</string>
+</resources>
