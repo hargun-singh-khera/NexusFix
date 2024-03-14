@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -17,6 +18,7 @@ class MainActivity3 : AppCompatActivity() {
     lateinit var etPass: EditText
     lateinit var etConfPass: EditText
     lateinit var btnSignup: Button
+    lateinit var tvLogin: TextView
     lateinit var auth: FirebaseAuth
     private lateinit var dbRef: DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,11 +31,16 @@ class MainActivity3 : AppCompatActivity() {
         etPass = findViewById(R.id.etPass)
         etConfPass = findViewById(R.id.etConfPass)
         btnSignup = findViewById(R.id.btnSignup)
+        tvLogin = findViewById(R.id.tvLogin)
         auth = FirebaseAuth.getInstance()
         dbRef = FirebaseDatabase.getInstance().getReference("Users")
 
         btnSignup.setOnClickListener {
             signUpUser()
+        }
+
+        tvLogin.setOnClickListener {
+            startActivity(Intent(this, MainActivity2::class.java))
         }
     }
     private fun signUpUser() {
@@ -45,8 +52,14 @@ class MainActivity3 : AppCompatActivity() {
         if (name.isEmpty() || email.isEmpty() || number.isEmpty() || pass.isEmpty() || cpass.isEmpty()) {
             Toast.makeText(this@MainActivity3, "All fields are mandatory", Toast.LENGTH_SHORT).show()
         }
+        else if (number.length != 10) {
+            Toast.makeText(this@MainActivity3, "Mobile number must be of 10 characters. Please enter a valid mobile number.", Toast.LENGTH_SHORT).show()
+            etMobileNumber.text.clear()
+        }
         else if (pass != cpass) {
             Toast.makeText(this@MainActivity3, "Password and Confirm Password doesn't matches", Toast.LENGTH_SHORT).show()
+            etPass.text.clear()
+            etConfPass.text.clear()
         }
         else {
             auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
@@ -59,9 +72,12 @@ class MainActivity3 : AppCompatActivity() {
                 }
             }
             val userId = dbRef.push().key!!
-            val user = UserModel(userId, name, number)
+            val user = UserModel(userId, name, email, number)
             dbRef.child(userId).setValue(user).addOnCompleteListener {
-                Toast.makeText(this@MainActivity3, "User Registration Successful", Toast.LENGTH_SHORT).show()
+                if (it.isSuccessful) {
+                    Toast.makeText(this@MainActivity3, "User Registration Successful", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this@MainActivity3, MainActivity4::class.java))
+                }
                 etName.text.clear()
                 etEmail.text.clear()
                 etMobileNumber.text.clear()
@@ -72,6 +88,5 @@ class MainActivity3 : AppCompatActivity() {
                     Toast.makeText(this@MainActivity3, "Error ${it.message}", Toast.LENGTH_SHORT).show()
                 }
         }
-        startActivity(Intent(this@MainActivity3, MainActivity4::class.java))
     }
 }

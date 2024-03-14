@@ -24,6 +24,9 @@ class MainActivity2 : AppCompatActivity() {
         btnSignin = findViewById(R.id.btnSignin)
         tvRegister = findViewById(R.id.tvRegister)
         auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+
+
 
         btnSignin.setOnClickListener {
             loginUser()
@@ -43,12 +46,18 @@ class MainActivity2 : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
                 if(it.isSuccessful) {
                     Toast.makeText(this@MainActivity2, "Login Successful", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, MainActivity4::class.java))
                 }
                 else {
-                    Toast.makeText(this@MainActivity2, "Unable to Login", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity2, "Invalid Credentials.", Toast.LENGTH_SHORT).show()
+                    etEmail.text.clear()
+                    etPass.text.clear()
                 }
             }
+//                .addOnFailureListener {
+//                    Toast.makeText(this@MainActivity2, "An error occurred while signing you in. Please try after some time.", Toast.LENGTH_SHORT).show()
+//                }
         }
-        startActivity(Intent(this, MainActivity4::class.java))
+
     }
 }
