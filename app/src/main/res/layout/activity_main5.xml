@@ -11,14 +11,15 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:title="NexusFix"
-        android:background="@color/orange"
+        app:title="Support Ticket"
+        app:titleTextColor="@color/black"
+        android:background="@color/white"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
         tools:ignore="MissingConstraints" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="700dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,8 +33,9 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="15dp"
-                android:textSize="30sp"
-                android:textStyle="bold" />
+                android:fontFamily="@font/poppins_light_font"
+                android:textStyle="bold"
+                android:textSize="30sp" />
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -66,6 +68,7 @@
                         android:layout_marginEnd="20dp"
                         android:layout_marginTop="8dp"/>
 
+
                     <TextView
                         android:id="@+id/tvLaptopProblem"
                         android:layout_width="wrap_content"
@@ -79,10 +82,13 @@
                     <EditText
                         android:id="@+id/etLaptopProblem"
                         android:layout_width="match_parent"
-                        android:layout_height="120dp"
+                        android:layout_height="wrap_content"
                         android:background="@drawable/edit_background2"
                         android:layout_below="@+id/tvLaptopProblem"
-                        android:paddingStart="20dp"
+                        android:minLines="5"
+                        android:gravity="top|start"
+                        android:paddingTop="7dp"
+                        android:paddingStart="12dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginTop="8dp"/>
@@ -97,23 +103,26 @@
                         android:textSize="18sp"
                         android:text="Upload Image" />
 
-                    <EditText
-                        android:id="@+id/etLaptopImage"
+                    <ImageView
+                        android:id="@+id/ivImgUpload"
                         android:layout_width="match_parent"
-                        android:layout_height="120dp"
-                        android:background="@drawable/edit_background2"
+                        android:layout_height="80dp"
                         android:layout_below="@+id/tvLaptopImage"
-                        android:paddingStart="20dp"
+                        android:backgroundTint="#16D1CBCB"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
-                        android:layout_marginTop="8dp"/>
+                        android:paddingTop="10dp"
+                        android:paddingBottom="20dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/edit_background2"
+                        android:src="@drawable/img7" />
 
                     <Button
                         android:id="@+id/btnSubmitRequest"
                         android:layout_width="match_parent"
                         android:layout_height="55dp"
                         android:text="Submit Request"
-                        android:layout_below="@+id/etLaptopImage"
+                        android:layout_below="@+id/ivImgUpload"
                         android:layout_marginBottom="40dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"

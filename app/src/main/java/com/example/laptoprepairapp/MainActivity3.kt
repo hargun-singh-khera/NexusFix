@@ -3,6 +3,7 @@ package com.example.laptoprepairapp
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -63,30 +64,36 @@ class MainActivity3 : AppCompatActivity() {
         }
         else {
             auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
-                auth.currentUser?.sendEmailVerification()?.addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        Toast.makeText(this@MainActivity3, "Sign Up Done", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this@MainActivity3, "Sign Up Not Done" + it.exception, Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-            val userId = dbRef.push().key!!
-            val user = UserModel(userId, name, email, number)
-            dbRef.child(userId).setValue(user).addOnCompleteListener {
                 if (it.isSuccessful) {
-                    Toast.makeText(this@MainActivity3, "User Registration Successful", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this@MainActivity3, MainActivity4::class.java))
+                    auth.currentUser?.sendEmailVerification()?.addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            Toast.makeText(this@MainActivity3, "Sign Up Done", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@MainActivity3, "Sign Up Not Done" + it.exception, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    val userId = auth.currentUser?.uid
+                    Toast.makeText(this, "UserId: ${userId}", Toast.LENGTH_SHORT).show()
+                    val user = UserModel(userId, name, email, number, false)
+                    dbRef.child(userId!!).setValue(user).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            Toast.makeText(this@MainActivity3, "User Registration Successful", Toast.LENGTH_SHORT).show()
+                            val intent = Intent(this@MainActivity3, MainActivity4::class.java)
+                            intent.putExtra("userId", userId)
+                            startActivity(intent)
+                        }
+                        etName.text.clear()
+                        etEmail.text.clear()
+                        etMobileNumber.text.clear()
+                        etPass.text.clear()
+                        etConfPass.text.clear()
+                    }
+                        .addOnFailureListener {
+                            Toast.makeText(this@MainActivity3, "Error ${it.message}", Toast.LENGTH_SHORT).show()
+                        }
                 }
-                etName.text.clear()
-                etEmail.text.clear()
-                etMobileNumber.text.clear()
-                etPass.text.clear()
-                etConfPass.text.clear()
+
             }
-                .addOnFailureListener {
-                    Toast.makeText(this@MainActivity3, "Error ${it.message}", Toast.LENGTH_SHORT).show()
-                }
         }
     }
 }
