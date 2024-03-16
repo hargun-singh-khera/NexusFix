@@ -1,6 +1,8 @@
 package com.example.laptoprepairapp
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -22,6 +24,8 @@ class MainActivity2 : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     lateinit var dbRef: DatabaseReference
     var isAdmin: Boolean ?= false
+    lateinit var sharedPreferences: SharedPreferences
+    val fileName = "userType"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main2)
@@ -32,6 +36,8 @@ class MainActivity2 : AppCompatActivity() {
         tvRegister = findViewById(R.id.tvRegister)
         auth = FirebaseAuth.getInstance()
         dbRef = FirebaseDatabase.getInstance().getReference("Users")
+
+        sharedPreferences = getSharedPreferences(fileName , Context.MODE_PRIVATE)
 
         btnSignin.setOnClickListener {
             loginUser()
@@ -50,31 +56,7 @@ class MainActivity2 : AppCompatActivity() {
         else {
             auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
                 if(it.isSuccessful) {
-                    dbRef.orderByChild("userEmail").equalTo(email).addValueEventListener(object: ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            if (snapshot.exists()) {
-                                for (userSnap in snapshot.children) {
-                                    Toast.makeText(this@MainActivity2, "Inside of Loop", Toast.LENGTH_SHORT).show()
-                                    val user = userSnap.getValue(UserModel::class.java)
-                                    isAdmin = user?.userAdmin
-                                    if (isAdmin!!) {
-                                        Toast.makeText(this@MainActivity2, "Admin User", Toast.LENGTH_SHORT).show()
-                                        startActivity(Intent(this@MainActivity2, MainActivity6::class.java))
-                                        finish()
-                                    }
-                                    else {
-                                        Toast.makeText(this@MainActivity2, "Normal User", Toast.LENGTH_SHORT).show()
-                                        startActivity(Intent(this@MainActivity2, MainActivity4::class.java))
-                                        finish()
-                                    }
-                                }
-                            }
-                        }
-                        override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
-                        }
-                    })
-
+                    checkUserAndLogin(email)
                 }
                 else {
                     Toast.makeText(this@MainActivity2, "Invalid Credentials.", Toast.LENGTH_SHORT).show()
@@ -83,5 +65,35 @@ class MainActivity2 : AppCompatActivity() {
                 }
             }
         }
+    }
+    private fun checkUserAndLogin(email: String) {
+        dbRef.orderByChild("userEmail").equalTo(email).addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (userSnap in snapshot.children) {
+                        val user = userSnap.getValue(UserModel::class.java)
+                        isAdmin = user?.userAdmin
+                        // saving the userType for further login process of app
+                        val editor = sharedPreferences.edit()
+                        editor.putBoolean("isAdmin", isAdmin!!)
+                        editor.putString("userName", user?.userName)
+                        editor.apply()
+                        if (isAdmin!!) {
+//                            Toast.makeText(this@MainActivity2, "Admin User", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this@MainActivity2, MainActivity6::class.java))
+                            finish()
+                        }
+                        else {
+//                            Toast.makeText(this@MainActivity2, "Normal User", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this@MainActivity2, MainActivity4::class.java))
+                            finish()
+                        }
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 }

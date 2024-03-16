@@ -102,7 +102,6 @@ class MainActivity5 : AppCompatActivity() {
             Toast.makeText(this@MainActivity5, "Please describe your problem.", Toast.LENGTH_SHORT).show()
         }
         else {
-
             Toast.makeText(this, "User Id: ${userId}", Toast.LENGTH_SHORT).show()
             val ticket = RequestModel(userId, ticketId, laptopModel, laptopProblemDesc)
             dbRef.child(ticketId).setValue(ticket).addOnCompleteListener {
