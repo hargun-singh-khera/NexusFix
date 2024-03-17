@@ -4,27 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity7">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:title="Dashboard"
-        app:titleTextColor="@color/black"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        tools:ignore="MissingConstraints" />
+    tools:context=".MainActivity10">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="1dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
-        tools:listitem="@layout/ticket_item" />
+        tools:listitem="@layout/ticket_item"/>
 
     <TextView
         android:id="@+id/tvLoadingData"

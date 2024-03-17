@@ -1,6 +1,5 @@
 package com.example.laptoprepairapp
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -16,60 +15,57 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class MainActivity7 : AppCompatActivity() {
-    private lateinit var recyclerView: RecyclerView
+class MainActivity8 : AppCompatActivity() {
+    private lateinit var empRecyclerView: RecyclerView
     private lateinit var tvLoadingData: TextView
-    private lateinit var ticketList: ArrayList<RequestModel>
+    private lateinit var userList: ArrayList<UserModel>
     private lateinit var dbRef: DatabaseReference
     lateinit var auth: FirebaseAuth
     lateinit var userId: String
+    var userExists: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main7)
+        setContentView(R.layout.activity_main8)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.setTitle("Ticket Management")
+        toolbar.setTitle("Manage Users")
         setSupportActionBar(toolbar)
 
-        recyclerView = findViewById(R.id.recyclerView)
+        empRecyclerView = findViewById(R.id.recyclerView)
         tvLoadingData = findViewById(R.id.tvLoadingData)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.setHasFixedSize(true)
+        empRecyclerView.layoutManager = LinearLayoutManager(this)
+        empRecyclerView.setHasFixedSize(true)
         auth = FirebaseAuth.getInstance()
         userId = auth.currentUser?.uid!!
 
-        ticketList = arrayListOf<RequestModel>()
+        userList = arrayListOf<UserModel>()
         getAllTickets()
 
     }
 
     private fun getAllTickets() {
-        recyclerView.visibility = View.GONE
+        empRecyclerView.visibility = View.GONE
         tvLoadingData.visibility = View.VISIBLE
         dbRef = FirebaseDatabase.getInstance().getReference("Users")
         dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                ticketList.clear()
+                userList.clear()
                 if (snapshot.exists()){
                     for (userSnap in snapshot.children){
-                        val userTicketRef = userSnap.child("Requests")
-                        for (ticketSnap in userTicketRef.children) {
-                            val ticket = ticketSnap.getValue(RequestModel::class.java)
-                            ticketList.add(ticket!!)
+                        val user = userSnap.getValue(UserModel::class.java)
+                        if (user?.userAdmin == false) {
+                            userExists = true
+                            userList.add(user)
                         }
                     }
-                    val mAdapter = TicketAdapter(this@MainActivity7, R.layout.ticket_item, ticketList)
-                    recyclerView.adapter = mAdapter
-
-                    mAdapter.setOnItemClickListener(object : TicketAdapter.onItemClickListener{
-                        override fun onItemClick(position: Int) {
-                            Toast.makeText(this@MainActivity7, "Hello Adapter", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this@MainActivity7, MainActivity9::class.java))
-                        }
-                    })
-
-                    recyclerView.visibility = View.VISIBLE
-                    tvLoadingData.visibility = View.GONE
+                    if (userExists) {
+                        val mAdapter = UserAdapter(this@MainActivity8, R.layout.user_item, userList, dbRef)
+                        empRecyclerView.adapter = mAdapter
+                        empRecyclerView.visibility = View.VISIBLE
+                        tvLoadingData.visibility = View.GONE
+                    } else {
+                        tvLoadingData.text = "No Record Found."
+                    }
                 }
                 else {
                     tvLoadingData.text = "No Record Found."

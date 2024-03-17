@@ -16,7 +16,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class MainActivity7 : AppCompatActivity() {
+class MainActivity10 : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var tvLoadingData: TextView
     private lateinit var ticketList: ArrayList<RequestModel>
@@ -25,11 +25,11 @@ class MainActivity7 : AppCompatActivity() {
     lateinit var userId: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main7)
+        setContentView(R.layout.activity_main10)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.setTitle("Ticket Management")
-        setSupportActionBar(toolbar)
+//        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+//        toolbar.setTitle("Ticket Management")
+//        setSupportActionBar(toolbar)
 
         recyclerView = findViewById(R.id.recyclerView)
         tvLoadingData = findViewById(R.id.tvLoadingData)
@@ -46,27 +46,17 @@ class MainActivity7 : AppCompatActivity() {
     private fun getAllTickets() {
         recyclerView.visibility = View.GONE
         tvLoadingData.visibility = View.VISIBLE
-        dbRef = FirebaseDatabase.getInstance().getReference("Users")
+        dbRef = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("Requests")
         dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 ticketList.clear()
                 if (snapshot.exists()){
-                    for (userSnap in snapshot.children){
-                        val userTicketRef = userSnap.child("Requests")
-                        for (ticketSnap in userTicketRef.children) {
-                            val ticket = ticketSnap.getValue(RequestModel::class.java)
-                            ticketList.add(ticket!!)
-                        }
+                    for (ticketSnap in snapshot.children){
+                        val ticket = ticketSnap.getValue(RequestModel::class.java)
+                        ticketList.add(ticket!!)
                     }
-                    val mAdapter = TicketAdapter(this@MainActivity7, R.layout.ticket_item, ticketList)
+                    val mAdapter = UserTicketAdapter(this@MainActivity10, R.layout.user_ticket_item, ticketList)
                     recyclerView.adapter = mAdapter
-
-                    mAdapter.setOnItemClickListener(object : TicketAdapter.onItemClickListener{
-                        override fun onItemClick(position: Int) {
-                            Toast.makeText(this@MainActivity7, "Hello Adapter", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this@MainActivity7, MainActivity9::class.java))
-                        }
-                    })
 
                     recyclerView.visibility = View.VISIBLE
                     tvLoadingData.visibility = View.GONE

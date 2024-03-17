@@ -24,20 +24,29 @@ class MainActivity : AppCompatActivity() {
         val isAdmin = sharedPreferences.getBoolean("isAdmin", false)
         Toast.makeText(this, "isAdmin: ${isAdmin}", Toast.LENGTH_SHORT).show()
         val currentUser = auth.currentUser
+//        Toast.makeText(this, "${currentUser}", Toast.LENGTH_SHORT).show()
+        val isVisited = sharedPreferences.getBoolean("homeVisited", false)
 
         if (currentUser != null) {
             if (isAdmin) {
                 startActivity(Intent(this@MainActivity, MainActivity6::class.java))
-                finish()
             }
             else {
                 startActivity(Intent(this@MainActivity, MainActivity4::class.java))
-                finish()
             }
+            finish()
+        }
+        else if (isVisited) {
+            startActivity(Intent(this, MainActivity2::class.java))
+            finish()
         }
 
         btnStart.setOnClickListener {
+            val editor = sharedPreferences.edit()
+            editor.putBoolean("homeVisited", true)
+            editor.apply()
             startActivity(Intent(this, MainActivity2::class.java))
+            finish()
         }
     }
 }

@@ -73,7 +73,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
                     android:paddingBottom="5dp"
-                    android:text="Ticket Management" />
+                    android:text="Manage Tickets" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

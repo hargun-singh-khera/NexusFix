@@ -14,15 +14,14 @@
         android:layout_height="match_parent"
         android:layout_margin="10dp">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/img10" />
+<!--        <ImageView-->
+<!--            android:id="@+id/imageView"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="100dp"-->
+<!--            android:src="@drawable/img10" />-->
 
         <TextView
             android:id="@+id/tvTicketId"
-            android:layout_toRightOf="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -32,7 +31,6 @@
 
         <TextView
             android:id="@+id/tvProblemType"
-            android:layout_toRightOf="@+id/imageView"
             android:layout_below="@+id/tvTicketId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,7 +40,6 @@
 
         <TextView
             android:id="@+id/tvLaptopModel"
-            android:layout_toRightOf="@+id/imageView"
             android:layout_below="@+id/tvProblemType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -51,23 +48,34 @@
             android:text="Model: " />
 
         <TextView
+            android:id="@+id/tvRemarks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="Remarks: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_below="@+id/tvLaptopModel" />
+
+        <TextView
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvLaptopModel"
+            android:layout_below="@+id/tvRemarks"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="10dp"
             android:text="Status" />
 
-<!--        <Button-->
-<!--            android:id="@+id/btnReply"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="10dp"-->
-<!--            android:layout_marginEnd="10dp"-->
-<!--            android:layout_marginTop="5dp"-->
-<!--            android:layout_below="@+id/imageView"-->
-<!--            android:text="Reply" />-->
+        <!--        <Button-->
+        <!--            android:id="@+id/btnReply"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginStart="10dp"-->
+        <!--            android:layout_marginEnd="10dp"-->
+        <!--            android:layout_marginTop="5dp"-->
+        <!--            android:layout_below="@+id/imageView"-->
+        <!--            android:text="Reply" />-->
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

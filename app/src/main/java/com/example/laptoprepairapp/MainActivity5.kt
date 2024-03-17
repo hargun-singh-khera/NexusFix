@@ -45,8 +45,8 @@ class MainActivity5 : AppCompatActivity() {
         ivImgUpload = findViewById(R.id.ivImgUpload)
         btnSubmitRequest = findViewById(R.id.btnSubmitRequest)
         auth = FirebaseAuth.getInstance()
-        dbRef = FirebaseDatabase.getInstance().getReference("Requests")
         userId = auth.currentUser?.uid
+        dbRef = FirebaseDatabase.getInstance().getReference("Users").child(userId!!).child("Requests")
         ticketId = dbRef.push().key!!
 
         getImage = registerForActivityResult(
@@ -103,11 +103,11 @@ class MainActivity5 : AppCompatActivity() {
         }
         else {
             Toast.makeText(this, "User Id: ${userId}", Toast.LENGTH_SHORT).show()
-            val ticket = RequestModel(userId, ticketId, laptopModel, laptopProblemDesc)
+            val ticket = RequestModel(ticketId, laptopModel, laptopProblemDesc)
             dbRef.child(ticketId).setValue(ticket).addOnCompleteListener {
                 if (it.isSuccessful) {
                     uploadImage()
-                    Toast.makeText(this@MainActivity5, "Your request has been successfully submitted and you will get the solution within 2-3 working days.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity5, "Your repair request has been received. Our team will get back to you shortly.", Toast.LENGTH_SHORT).show()
                 }
                 etLaptopModel.text.clear()
                 etLaptopProblem.text.clear()
