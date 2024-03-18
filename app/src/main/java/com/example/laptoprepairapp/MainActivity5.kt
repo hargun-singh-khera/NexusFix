@@ -77,8 +77,7 @@ class MainActivity5 : AppCompatActivity() {
             progressDialog.show()
             if (userId != null) {
                 Toast.makeText(this@MainActivity5, "Ticket id: ${ticketId}", Toast.LENGTH_SHORT).show()
-                val ref: StorageReference = FirebaseStorage.getInstance().getReference("UserRequests/${userId}/${ticketId}")
-                    .child(UUID.randomUUID().toString())
+                val ref: StorageReference = FirebaseStorage.getInstance().getReference("Users/${userId}/Tickets/").child(ticketId)
                 ref.putFile(fileUri!!).addOnSuccessListener {
                     progressDialog.dismiss()
                     Toast.makeText(this@MainActivity5, "Image Uploaded", Toast.LENGTH_SHORT).show()
@@ -103,7 +102,7 @@ class MainActivity5 : AppCompatActivity() {
         }
         else {
             Toast.makeText(this, "User Id: ${userId}", Toast.LENGTH_SHORT).show()
-            val ticket = RequestModel(ticketId, laptopModel, laptopProblemDesc)
+            val ticket = RequestModel(userId, ticketId, laptopModel, laptopProblemDesc)
             dbRef.child(ticketId).setValue(ticket).addOnCompleteListener {
                 if (it.isSuccessful) {
                     uploadImage()

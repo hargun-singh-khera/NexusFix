@@ -30,8 +30,17 @@
                 android:textSize="20sp" />
 
             <TextView
+                android:id="@+id/tvLaptopModel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Laptop Model: "
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_below="@+id/tvProblemDesc" />
+
+            <TextView
                 android:id="@+id/tvProblem"
-                android:layout_below="@+id/tvProblemDesc"
+                android:layout_below="@+id/tvLaptopModel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"

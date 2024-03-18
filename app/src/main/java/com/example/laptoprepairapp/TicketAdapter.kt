@@ -1,15 +1,17 @@
 package com.example.laptoprepairapp
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class TicketAdapter(val context: Context, val resource: Int, val objects: ArrayList<RequestModel>) : RecyclerView.Adapter<TicketAdapter.ViewHolder>() {
+class TicketAdapter(val context: Context, val resource: Int, val objects: ArrayList<RequestModel>, val ticketBitmapMap: HashMap<String, Bitmap>) : RecyclerView.Adapter<TicketAdapter.ViewHolder>() {
     class ViewHolder(itemView: View, clickListener: onItemClickListener) : RecyclerView.ViewHolder(itemView)
     {
         val imageView = itemView.findViewById<ImageView>(R.id.imageView)
@@ -46,6 +48,8 @@ class TicketAdapter(val context: Context, val resource: Int, val objects: ArrayL
     override fun onBindViewHolder(holder: ViewHolder, position: Int)
     {
         val myObj = objects[position]
+        holder.imageView.setImageBitmap(ticketBitmapMap[myObj.ticketId])
+//        holder.imageView.setImageResource(R.drawable.img8)
         holder.tvTicketId.text = "Ticket ID: ${myObj.ticketId}"
         holder.tvProblemType.text = "Problem: ${myObj.problemDesc}"
         holder.tvLaptopModel.text = "Model: ${myObj.laptopModel}"

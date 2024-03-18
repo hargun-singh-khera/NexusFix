@@ -16,20 +16,20 @@ import com.google.firebase.messaging.RemoteMessage
 class FirebaseMessageService: FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d("RefreshedToeken", token)
+        Log.d("RefreshedToken", token)
     }
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         if (message.notification != null) {
-            pushNotification(message.notification!!.title.toString(), message.notification!!.body.toString())
+            pushNotification(message.notification?.title.toString(), message.notification?.body.toString())
         }
     }
 
-    private fun pushNotification(title: String, mssg: String) {
+    private fun pushNotification(title: String, body: String) {
         createNotificationChannel()
         val notificationBuilder = NotificationCompat.Builder(this)
             .setContentTitle(title)
-            .setContentText(mssg)
+            .setContentText(body)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
