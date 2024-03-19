@@ -16,7 +16,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class MainActivity2 : AppCompatActivity() {
+class LoginScreen : AppCompatActivity() {
     lateinit var etEmail: EditText
     lateinit var etPass: EditText
     lateinit var btnSignin: Button
@@ -44,7 +44,7 @@ class MainActivity2 : AppCompatActivity() {
         }
 
         tvRegister.setOnClickListener {
-            startActivity(Intent(this, MainActivity3::class.java))
+            startActivity(Intent(this, RegisterScreen::class.java))
         }
     }
     private fun loginUser() {
@@ -59,7 +59,7 @@ class MainActivity2 : AppCompatActivity() {
                     checkUserAndLogin(email)
                 }
                 else {
-                    Toast.makeText(this@MainActivity2, "Invalid Credentials.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginScreen, "Invalid Credentials.", Toast.LENGTH_SHORT).show()
                     etEmail.text.clear()
                     etPass.text.clear()
                 }
@@ -79,13 +79,13 @@ class MainActivity2 : AppCompatActivity() {
                         editor.putString("userName", user?.userName)
                         editor.apply()
                         if (isAdmin!!) {
-//                            Toast.makeText(this@MainActivity2, "Admin User", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this@MainActivity2, MainActivity6::class.java))
+//                            Toast.makeText(this@LoginScreen, "Admin User", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this@LoginScreen, AdminDashboard::class.java))
                             finish()
                         }
                         else {
-//                            Toast.makeText(this@MainActivity2, "Normal User", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this@MainActivity2, MainActivity4::class.java))
+//                            Toast.makeText(this@LoginScreen, "Normal User", Toast.LENGTH_SHORT).show()
+                            startActivity(Intent(this@LoginScreen, UserDashboard::class.java))
                             finish()
                         }
                     }

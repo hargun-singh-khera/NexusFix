@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -14,7 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-class MainActivity3 : AppCompatActivity() {
+class RegisterScreen : AppCompatActivity() {
     lateinit var etName: EditText
     lateinit var etEmail: EditText
     lateinit var etMobileNumber: EditText
@@ -46,7 +45,7 @@ class MainActivity3 : AppCompatActivity() {
         }
 
         tvLogin.setOnClickListener {
-            startActivity(Intent(this, MainActivity2::class.java))
+            startActivity(Intent(this, LoginScreen::class.java))
         }
     }
     private fun signUpUser() {
@@ -56,14 +55,14 @@ class MainActivity3 : AppCompatActivity() {
         val pass = etPass.text.toString()
         val cpass = etConfPass.text.toString()
         if (name.isEmpty() || email.isEmpty() || number.isEmpty() || pass.isEmpty() || cpass.isEmpty()) {
-            Toast.makeText(this@MainActivity3, "All fields are mandatory", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@RegisterScreen, "All fields are mandatory", Toast.LENGTH_SHORT).show()
         }
         else if (number.length != 10) {
-            Toast.makeText(this@MainActivity3, "Mobile number must be of 10 characters. Please enter a valid mobile number.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@RegisterScreen, "Mobile number must be of 10 characters. Please enter a valid mobile number.", Toast.LENGTH_SHORT).show()
             etMobileNumber.text.clear()
         }
         else if (pass != cpass) {
-            Toast.makeText(this@MainActivity3, "Password and Confirm Password doesn't matches", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@RegisterScreen, "Password and Confirm Password doesn't matches", Toast.LENGTH_SHORT).show()
             etPass.text.clear()
             etConfPass.text.clear()
         }
@@ -72,9 +71,9 @@ class MainActivity3 : AppCompatActivity() {
                 if (it.isSuccessful) {
                     auth.currentUser?.sendEmailVerification()?.addOnCompleteListener {
                         if (it.isSuccessful) {
-                            Toast.makeText(this@MainActivity3, "Sign Up Done", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterScreen, "Sign Up Done", Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(this@MainActivity3, "Sign Up Not Done" + it.exception, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterScreen, "Sign Up Not Done" + it.exception, Toast.LENGTH_SHORT).show()
                         }
                     }
                     val userId = auth.currentUser?.uid
@@ -86,8 +85,8 @@ class MainActivity3 : AppCompatActivity() {
                     val user = UserModel(userId, name, email, number, false)
                     dbRef.child(userId!!).setValue(user).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            Toast.makeText(this@MainActivity3, "User Registration Successful", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this@MainActivity3, MainActivity4::class.java)
+                            Toast.makeText(this@RegisterScreen, "User Registration Successful", Toast.LENGTH_SHORT).show()
+                            val intent = Intent(this@RegisterScreen, UserDashboard::class.java)
                             intent.putExtra("userId", userId)
                             startActivity(intent)
                         }
@@ -99,7 +98,7 @@ class MainActivity3 : AppCompatActivity() {
                         finish()
                     }
                         .addOnFailureListener {
-                            Toast.makeText(this@MainActivity3, "Error ${it.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterScreen, "Error ${it.message}", Toast.LENGTH_SHORT).show()
                         }
                 }
 

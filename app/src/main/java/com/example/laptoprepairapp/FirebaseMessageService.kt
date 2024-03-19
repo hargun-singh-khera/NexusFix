@@ -1,13 +1,11 @@
 package com.example.laptoprepairapp
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -25,6 +23,7 @@ class FirebaseMessageService: FirebaseMessagingService() {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun pushNotification(title: String, body: String) {
         createNotificationChannel()
         val notificationBuilder = NotificationCompat.Builder(this)
@@ -34,10 +33,7 @@ class FirebaseMessageService: FirebaseMessagingService() {
             .build()
 
         val notificationManager = NotificationManagerCompat.from(this)
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            notificationManager.notify(1, notificationBuilder)
-        }
-
+        notificationManager.notify(1, notificationBuilder)
     }
 
     private fun createNotificationChannel() {

@@ -2,8 +2,8 @@ package com.example.laptoprepairapp
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,9 +15,10 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class MainActivity8 : AppCompatActivity() {
+class AdminUserManagement : AppCompatActivity() {
     private lateinit var empRecyclerView: RecyclerView
     private lateinit var tvLoadingData: TextView
+    private lateinit var progressBar: ProgressBar
     private lateinit var userList: ArrayList<UserModel>
     private lateinit var dbRef: DatabaseReference
     lateinit var auth: FirebaseAuth
@@ -30,9 +31,13 @@ class MainActivity8 : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setTitle("Manage Users")
         setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
 
         empRecyclerView = findViewById(R.id.recyclerView)
         tvLoadingData = findViewById(R.id.tvLoadingData)
+        progressBar = findViewById(R.id.progressBar)
         empRecyclerView.layoutManager = LinearLayoutManager(this)
         empRecyclerView.setHasFixedSize(true)
         auth = FirebaseAuth.getInstance()
@@ -45,7 +50,8 @@ class MainActivity8 : AppCompatActivity() {
 
     private fun getAllTickets() {
         empRecyclerView.visibility = View.GONE
-        tvLoadingData.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
+        tvLoadingData.visibility = View.GONE
         dbRef = FirebaseDatabase.getInstance().getReference("Users")
         dbRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -59,15 +65,18 @@ class MainActivity8 : AppCompatActivity() {
                         }
                     }
                     if (userExists) {
-                        val mAdapter = UserAdapter(this@MainActivity8, R.layout.user_item, userList, dbRef)
+                        val mAdapter = UserAdapter(this@AdminUserManagement, R.layout.user_item, userList, dbRef)
                         empRecyclerView.adapter = mAdapter
+                        progressBar.visibility = View.GONE
                         empRecyclerView.visibility = View.VISIBLE
                         tvLoadingData.visibility = View.GONE
                     } else {
+                        progressBar.visibility = View.GONE
                         tvLoadingData.text = "No Record Found."
                     }
                 }
                 else {
+                    progressBar.visibility = View.GONE
                     tvLoadingData.text = "No Record Found."
                 }
             }

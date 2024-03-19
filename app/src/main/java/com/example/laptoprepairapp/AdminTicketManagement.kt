@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -22,11 +23,11 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.util.UUID
 
-class MainActivity7 : AppCompatActivity() {
+class AdminTicketManagement : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var tvLoadingData: TextView
+    private lateinit var progressBar: ProgressBar
     private lateinit var ticketList: ArrayList<RequestModel>
     private lateinit var dbRef: DatabaseReference
     lateinit var storageReference: StorageReference
@@ -44,9 +45,13 @@ class MainActivity7 : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.setTitle("Ticket Management")
         setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
 
         recyclerView = findViewById(R.id.recyclerView)
         tvLoadingData = findViewById(R.id.tvLoadingData)
+        progressBar = findViewById(R.id.progressBar)
         ticketBitmapMap = HashMap()
 
 
@@ -61,7 +66,8 @@ class MainActivity7 : AppCompatActivity() {
 
     private fun getAllTickets() {
         recyclerView.visibility = View.GONE
-        tvLoadingData.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
+        tvLoadingData.visibility = View.GONE
         dbRef = FirebaseDatabase.getInstance().getReference("Users")
 
         dbRef.addValueEventListener(object : ValueEventListener {
@@ -80,16 +86,18 @@ class MainActivity7 : AppCompatActivity() {
                         }
                     }
                     if (ticketList.isEmpty()) {
+                        progressBar.visibility = View.GONE
                         tvLoadingData.text = "No Record Found."
                     }
                 }
                 else {
+                    progressBar.visibility = View.GONE
                     tvLoadingData.text = "No Record Found."
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@MainActivity7, "Failed to load tickets.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@AdminTicketManagement, "Failed to load tickets.", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -99,6 +107,7 @@ class MainActivity7 : AppCompatActivity() {
         val localFile = File.createTempFile("tempImage", "jpg")
         storageReference.getFile(localFile).addOnSuccessListener {
             bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
+            Log.d("Bitmap2", bitmap.toString())
             ticketBitmapMap[ticketId] = bitmap
             // Checks if all images are fetched
             if (ticketBitmapMap.size == ticketList.size) {
@@ -106,17 +115,17 @@ class MainActivity7 : AppCompatActivity() {
                 updateAdapterWithBitmap()
             }
         } .addOnFailureListener {
-            Toast.makeText(this@MainActivity7, "Failed to retrieve the image", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@AdminTicketManagement, "Failed to retrieve the image", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun updateAdapterWithBitmap() {
-        val mAdapter = TicketAdapter(this@MainActivity7, R.layout.ticket_item, ticketList, ticketBitmapMap)
+        val mAdapter = TicketAdapter(this@AdminTicketManagement, R.layout.ticket_item, ticketList, ticketBitmapMap)
         recyclerView.adapter = mAdapter
 
         mAdapter.setOnItemClickListener(object : TicketAdapter.onItemClickListener{
             override fun onItemClick(position: Int) {
-                val intent = Intent(this@MainActivity7, MainActivity9::class.java)
+                val intent = Intent(this@AdminTicketManagement, AdminTicketResponse::class.java)
                 userId = ticketList[position].userId!!
                 ticketId = ticketList[position].ticketId!!
                 laptopModel = ticketList[position].laptopModel!!
@@ -128,19 +137,24 @@ class MainActivity7 : AppCompatActivity() {
                 intent.putExtra("laptopModel", laptopModel)
                 intent.putExtra("problemDesc", problemDesc)
 
-                // Convert the Bitmap to a byte array
-//                val stream = ByteArrayOutputStream()
-//                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-//                val byteArray = stream.toByteArray()
-////                intent.putExtra("bitmap", byteArray)
-//                Log.d("ByteArray", byteArray.toString())
-//                Log.d("ByteArraySize", "Size: ${byteArray.size}")
-//                intent.putExtra("bitmap", byteArray)
+                if (bitmap != null) {
+                    // Convert the Bitmap to a byte array
+                    val stream = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                    val byteArray = stream.toByteArray()
+                    // Pass the byte array as an extra with the intent
+                    Log.d("ByteArray", byteArray.toString())
+                    intent.putExtra("bitmap", byteArray)
+                } else {
+                    Toast.makeText(this@AdminTicketManagement, "Bitmap is null", Toast.LENGTH_SHORT).show()
+                }
+
                 startActivity(intent)
             }
         })
 
         recyclerView.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
         tvLoadingData.visibility = View.GONE
     }
 }

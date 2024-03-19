@@ -14,8 +14,9 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 
-class MainActivity4 : AppCompatActivity() {
+class UserDashboard : AppCompatActivity() {
     lateinit var tvUserName: TextView
     lateinit var btnTrackReq: Button
     lateinit var auth: FirebaseAuth
@@ -33,8 +34,10 @@ class MainActivity4 : AppCompatActivity() {
         tvUserName = findViewById(R.id.tvUserName)
         btnTrackReq = findViewById(R.id.btnTrackReq)
 
+        getFCMToken()
+
         btnTrackReq.setOnClickListener {
-            startActivity(Intent(this, MainActivity10::class.java))
+            startActivity(Intent(this, UserTrackRequests::class.java))
         }
 
         auth = FirebaseAuth.getInstance()
@@ -46,9 +49,8 @@ class MainActivity4 : AppCompatActivity() {
 
         cardViewSupportTicket = findViewById(R.id.cardViewSupportTicket)
         cardViewSupportTicket.setOnClickListener {
-            startActivity(Intent(this, MainActivity5::class.java))
+            startActivity(Intent(this, SupportTicket::class.java))
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -59,15 +61,29 @@ class MainActivity4 : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
         when(id) {
+            R.id.profile -> {
+
+            }
             R.id.logout -> {
                 val editor = sharedPreferences.edit()
                 editor.putBoolean("isAdmin", false)
                 editor.apply()
                 auth.signOut()
-                startActivity(Intent(this@MainActivity4, MainActivity2::class.java))
+                startActivity(Intent(this@UserDashboard, LoginScreen::class.java))
                 finish()
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun getFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (!it.isSuccessful) {
+                Log.e("TokenDetails", "Token failed to recieve")
+                return@addOnCompleteListener
+            }
+            val token = it.result
+            Log.d("USER TOKEN", token)
+        }
     }
 }

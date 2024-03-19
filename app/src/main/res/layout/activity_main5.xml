@@ -5,16 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity5">
+    tools:context=".SupportTicket">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:title="Support Ticket"
-        app:titleTextColor="@color/black"
-        android:background="@color/white"
+        app:title="Dashboard"
+        app:titleTextColor="@color/white"
+        android:background="@color/orange"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        app:navigationIcon="?homeAsUpIndicator"
         tools:ignore="MissingConstraints" />
 
     <ScrollView
@@ -29,7 +30,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Repair Request Form"
+                android:text="Support Ticket Form"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="15dp"
@@ -83,6 +84,7 @@
                         android:id="@+id/etLaptopProblem"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:hint="Enter your problem description here..."
                         android:background="@drawable/edit_background2"
                         android:layout_below="@+id/tvLaptopProblem"
                         android:minLines="5"
@@ -106,7 +108,7 @@
                     <ImageView
                         android:id="@+id/ivImgUpload"
                         android:layout_width="match_parent"
-                        android:layout_height="80dp"
+                        android:layout_height="120dp"
                         android:layout_below="@+id/tvLaptopImage"
                         android:backgroundTint="#16D1CBCB"
                         android:layout_marginStart="20dp"
@@ -121,6 +123,7 @@
                         android:id="@+id/btnSubmitRequest"
                         android:layout_width="match_parent"
                         android:layout_height="55dp"
+                        android:background="@drawable/rounded_button"
                         android:text="Submit Request"
                         android:layout_below="@+id/ivImgUpload"
                         android:layout_marginBottom="40dp"

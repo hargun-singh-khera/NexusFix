@@ -6,5 +6,7 @@ data class RequestModel (
     var laptopModel: String?= null,
     var problemDesc: String?= null,
     var remarks: String ?= "",
-    var reqCompleted: Boolean ?= false
+    var reqCompleted: Boolean ?= false,
+    var problemSolved: Boolean ?= false,
+    var choiceChoosen: Boolean ?= false
 )

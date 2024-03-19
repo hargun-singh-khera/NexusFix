@@ -1,10 +1,6 @@
 <resources>
-    <string name="app_name">Laptop Repair App</string>
+    <string name="app_name">NexusFix</string>
     <string name="welcome">Welcome back!</string>
-    <string name="sign_in">Sign in to access your account</string>
-    <string-array name="categories">
-        <item>Hardware</item>
-        <item>Software</item>
-    </string-array>
+
 
 </resources>

@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 
-class MainActivity : AppCompatActivity() {
+class IntroductionScreen : AppCompatActivity() {
     lateinit var btnStart: Button
     lateinit var auth: FirebaseAuth
     lateinit var sharedPreferences: SharedPreferences
@@ -29,15 +29,15 @@ class MainActivity : AppCompatActivity() {
 
         if (currentUser != null) {
             if (isAdmin) {
-                startActivity(Intent(this@MainActivity, MainActivity6::class.java))
+                startActivity(Intent(this@IntroductionScreen, AdminDashboard::class.java))
             }
             else {
-                startActivity(Intent(this@MainActivity, MainActivity4::class.java))
+                startActivity(Intent(this@IntroductionScreen, UserDashboard::class.java))
             }
             finish()
         }
         else if (isVisited) {
-            startActivity(Intent(this, MainActivity2::class.java))
+            startActivity(Intent(this, LoginScreen::class.java))
             finish()
         }
 
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             val editor = sharedPreferences.edit()
             editor.putBoolean("homeVisited", true)
             editor.apply()
-            startActivity(Intent(this, MainActivity2::class.java))
+            startActivity(Intent(this, LoginScreen::class.java))
             finish()
         }
     }

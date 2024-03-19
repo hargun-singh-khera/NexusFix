@@ -7,16 +7,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
 
-class MainActivity6 : AppCompatActivity() {
+class AdminDashboard : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     lateinit var cardViewTicketManagement: CardView
     lateinit var cardViewUserManagement: CardView
@@ -31,14 +28,16 @@ class MainActivity6 : AppCompatActivity() {
         cardViewUserManagement = findViewById(R.id.cardViewUserManagement)
         sharedPreferences = getSharedPreferences(fileName, Context.MODE_PRIVATE)
 
-//        FirebaseMessaging.getInstance().token.addOnCompleteListener {
-//            if (!it.isSuccessful) {
-//                Log.e("TokenDetails", "Token failed to recieve")
-//                return@addOnCompleteListener
-//            }
-//            val token = it.result
-//            Log.d("TOKEN", token)
-//        }
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (!it.isSuccessful) {
+                Log.e("TokenDetails", "Token failed to recieve")
+                return@addOnCompleteListener
+            }
+            val token = it.result
+            Log.d("ADMIN-TOKEN", token)
+        }
+
+
 
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -46,11 +45,11 @@ class MainActivity6 : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         cardViewTicketManagement.setOnClickListener {
-            startActivity(Intent(this, MainActivity7::class.java))
+            startActivity(Intent(this, AdminTicketManagement::class.java))
         }
 
         cardViewUserManagement.setOnClickListener {
-            startActivity(Intent(this, MainActivity8::class.java))
+            startActivity(Intent(this, AdminUserManagement::class.java))
         }
     }
 
@@ -67,11 +66,11 @@ class MainActivity6 : AppCompatActivity() {
                 editor.putBoolean("isAdmin", false)
                 editor.apply()
                 auth.signOut()
-                startActivity(Intent(this@MainActivity6, MainActivity2::class.java))
+                startActivity(Intent(this@AdminDashboard, LoginScreen::class.java))
                 finish()
             }
             R.id.notification -> {
-                startActivity(Intent(this@MainActivity6, MainActivity7::class.java))
+                startActivity(Intent(this@AdminDashboard, AdminTicketManagement::class.java))
             }
         }
         return super.onOptionsItemSelected(item)

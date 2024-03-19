@@ -16,3 +16,5 @@ dependencyResolutionManagement {
 rootProject.name = "Laptop Repair App"
 include(":app")
 include(":adminapp")
+include(":adminapp:adminapp")
+include(":admin")

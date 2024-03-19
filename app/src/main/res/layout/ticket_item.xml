@@ -59,15 +59,5 @@
             android:layout_marginEnd="10dp"
             android:text="Status" />
 
-<!--        <Button-->
-<!--            android:id="@+id/btnReply"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="10dp"-->
-<!--            android:layout_marginEnd="10dp"-->
-<!--            android:layout_marginTop="5dp"-->
-<!--            android:layout_below="@+id/imageView"-->
-<!--            android:text="Reply" />-->
-
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
