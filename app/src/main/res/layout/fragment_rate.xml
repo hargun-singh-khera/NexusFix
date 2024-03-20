@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".RateFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Rate your Experience!"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textAlignment="center"
+                android:textSize="25sp"
+                android:textColor="@color/orange" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="320dp"
+                android:src="@drawable/img17" />
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:numStars="5"
+                android:rating="1.5"
+                android:layout_gravity="center" />
+
+            <Button
+                android:id="@+id/btnSendRating"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="15dp"
+                android:textAllCaps="false"
+                app:cornerRadius="30dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:text="Rate Us" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="invisible"
+                android:layout_marginTop="8dp"
+                android:max="100"
+                android:progress="0"
+                android:indeterminate="true" />
+
+            <TextView
+                android:id="@+id/sendingRatingTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textAlignment="center"
+                android:layout_marginTop="30dp"
+                android:textSize="15sp"
+                android:textColor="@color/cardview_dark_background" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>

@@ -41,6 +41,7 @@
             android:id="@+id/btnStart"
             android:layout_width="match_parent"
             android:layout_height="55sp"
+            android:background="@drawable/rounded_button"
             android:layout_marginTop="80dp"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"

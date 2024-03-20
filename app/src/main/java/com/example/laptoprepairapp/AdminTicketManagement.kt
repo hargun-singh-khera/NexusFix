@@ -1,5 +1,6 @@
 package com.example.laptoprepairapp
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -49,22 +50,23 @@ class AdminTicketManagement : AppCompatActivity() {
             finish()
         }
 
+
+        getAllTickets()
+
+    }
+
+    private fun getAllTickets() {
         recyclerView = findViewById(R.id.recyclerView)
         tvLoadingData = findViewById(R.id.tvLoadingData)
         progressBar = findViewById(R.id.progressBar)
         ticketBitmapMap = HashMap()
-
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
         auth = FirebaseAuth.getInstance()
 
         ticketList = arrayListOf<RequestModel>()
-        getAllTickets()
 
-    }
-
-    private fun getAllTickets() {
         recyclerView.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
         tvLoadingData.visibility = View.GONE
@@ -87,11 +89,13 @@ class AdminTicketManagement : AppCompatActivity() {
                     }
                     if (ticketList.isEmpty()) {
                         progressBar.visibility = View.GONE
+                        tvLoadingData.visibility = View.VISIBLE
                         tvLoadingData.text = "No Record Found."
                     }
                 }
                 else {
                     progressBar.visibility = View.GONE
+                    tvLoadingData.visibility = View.VISIBLE
                     tvLoadingData.text = "No Record Found."
                 }
             }
@@ -157,4 +161,12 @@ class AdminTicketManagement : AppCompatActivity() {
         progressBar.visibility = View.GONE
         tvLoadingData.visibility = View.GONE
     }
+
+    override fun onResume() {
+        super.onResume()
+        getAllTickets()
+    }
+
+
+
 }

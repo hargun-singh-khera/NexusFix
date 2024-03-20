@@ -1,6 +1,7 @@
 package com.example.laptoprepairapp
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -9,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.text.InputType
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -38,9 +40,7 @@ class AdminTicketResponse : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main9)
-
-
+        setContentView(R.layout.admin_ticket_response)
 
         etResponse = findViewById(R.id.etResponse)
         btnSubmit = findViewById(R.id.btnSubmit)
@@ -73,20 +73,24 @@ class AdminTicketResponse : AppCompatActivity() {
 
         btnSubmit.setOnClickListener {
             submitResponse()
-            finish()
         }
     }
 
     private fun submitResponse() {
         val remarks = etResponse.text.toString()
-        val request = RequestModel(userId, ticketId, laptopModel, problemDesc, remarks, true)
-        dbRef.child(ticketId!!).setValue(request).addOnSuccessListener {
-            Toast.makeText(this, "Response recorded successfully", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(this, AdminTicketManagement::class.java))
-        } .addOnFailureListener{ error ->
-            Toast.makeText(this, "Error while responding ${error.message}", Toast.LENGTH_LONG).show()
+        if (remarks.isEmpty()) {
+            Toast.makeText(this@AdminTicketResponse, "Please enter a response", Toast.LENGTH_SHORT).show()
         }
-        pushNotification(problemDesc, remarks)
+        else {
+            val request = RequestModel(userId, ticketId, laptopModel, problemDesc, remarks, true)
+            dbRef.child(ticketId!!).setValue(request).addOnSuccessListener {
+                Toast.makeText(this, "Your response has been recorded successfully", Toast.LENGTH_SHORT).show()
+                finish()
+            } .addOnFailureListener{ error ->
+                Toast.makeText(this, "Error while responding ${error.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+//        pushNotification(problemDesc, remarks)
     }
 
     private fun setValuesToView() {
@@ -121,4 +125,6 @@ class AdminTicketResponse : AppCompatActivity() {
         }
          Toast.makeText(this@AdminTicketResponse, "Executed 1", Toast.LENGTH_SHORT).show()
     }
+
+
 }

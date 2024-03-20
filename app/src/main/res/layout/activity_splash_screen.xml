@@ -15,6 +15,16 @@
         android:src="@drawable/img16"
         android:textAlignment="center" />
 
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NexusFix"
+        android:layout_below="@+id/appLogo"
+        android:layout_centerHorizontal="true"
+        android:textSize="28sp"
+        android:layout_marginTop="10dp" />
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

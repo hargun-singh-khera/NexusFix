@@ -11,45 +11,41 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
 
 class UserDashboard : AppCompatActivity() {
-    lateinit var tvUserName: TextView
-    lateinit var btnTrackReq: Button
     lateinit var auth: FirebaseAuth
     lateinit var sharedPreferences: SharedPreferences
-    lateinit var cardViewSupportTicket: CardView
+    lateinit var bottomNavigationView: BottomNavigationView
+    lateinit var fab: FloatingActionButton
+    lateinit var toolbar: Toolbar
     val fileName = "userType"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main4)
+        setContentView(R.layout.user_dashboard)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar = findViewById(R.id.toolbar)
         toolbar.setTitle("Dashboard")
         setSupportActionBar(toolbar)
 
-        tvUserName = findViewById(R.id.tvUserName)
-        btnTrackReq = findViewById(R.id.btnTrackReq)
+        replaceFrameWithFragment(HomeFragment())
 
-        getFCMToken()
+        bottomNavigationView = findViewById(R.id.bottomNavigationView)
+        fab = findViewById(R.id.fab)
 
-        btnTrackReq.setOnClickListener {
-            startActivity(Intent(this, UserTrackRequests::class.java))
-        }
+        bottomNavHandler()
 
         auth = FirebaseAuth.getInstance()
-        sharedPreferences = getSharedPreferences(fileName, Context.MODE_PRIVATE)
-        val userName = sharedPreferences.getString("userName", "")
-        tvUserName.text = "Hi, " + userName.toString()
 
-        Toast.makeText(this, "${auth.currentUser?.email}", Toast.LENGTH_SHORT).show()
-
-        cardViewSupportTicket = findViewById(R.id.cardViewSupportTicket)
-        cardViewSupportTicket.setOnClickListener {
-            startActivity(Intent(this, SupportTicket::class.java))
+        fab.setOnClickListener {
+            shareApp()
         }
     }
 
@@ -62,28 +58,74 @@ class UserDashboard : AppCompatActivity() {
         val id = item.itemId
         when(id) {
             R.id.profile -> {
-
+                replaceFrameWithFragment(ProfileFragment())
+                toolbar.setTitle("My Profile")
             }
             R.id.logout -> {
-                val editor = sharedPreferences.edit()
-                editor.putBoolean("isAdmin", false)
-                editor.apply()
-                auth.signOut()
-                startActivity(Intent(this@UserDashboard, LoginScreen::class.java))
-                finish()
+                logoutAlert()
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getFCMToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener {
-            if (!it.isSuccessful) {
-                Log.e("TokenDetails", "Token failed to recieve")
-                return@addOnCompleteListener
+    private fun replaceFrameWithFragment(fragment: Fragment) {
+        val fragManager = supportFragmentManager
+        val fragTransaction = fragManager.beginTransaction()
+        fragTransaction.replace(R.id.frameLayout, fragment)
+        fragTransaction.commit()
+    }
+
+    private fun bottomNavHandler() {
+        bottomNavigationView.background = null
+        bottomNavigationView.menu.getItem(2).isEnabled = false
+
+        bottomNavigationView.setOnItemSelectedListener {
+            when(it.itemId) {
+                R.id.home -> {
+                    replaceFrameWithFragment(HomeFragment())
+                    toolbar.setTitle("Dashboard")
+                }
+                R.id.rate -> {
+                    toolbar.setTitle("Rate Us")
+                    replaceFrameWithFragment(RateFragment())
+                }
+                R.id.profile -> {
+                    replaceFrameWithFragment(ProfileFragment())
+                    toolbar.setTitle("My Profile")
+                }
+                R.id.logout -> logoutAlert()
             }
-            val token = it.result
-            Log.d("USER TOKEN", token)
+            true
         }
     }
+
+    fun logoutAlert() {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage("Are you sure you want to logout ?")
+        builder.setTitle("Logout Alert!")
+        builder.setCancelable(false)
+        builder.setPositiveButton("Yes") {
+                dialog, which -> logoutRedirect()
+        }
+        builder.setNegativeButton("No") {
+                dialog, which -> dialog.cancel()
+        }
+        val alertDialog = builder.create()
+        alertDialog.show()
+    }
+
+    private fun logoutRedirect() {
+        auth.signOut()
+        val intent = Intent(this, LoginScreen::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    fun shareApp() {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.setType("text/plain")
+        intent.putExtra(Intent.EXTRA_TEXT,"https://drive.google.com/file/d/1eoH8RwKV_TtW6mXETQFhNrBHguD4gqGa/view?usp=sharing")
+        startActivity(Intent.createChooser(intent, "Share Link!"))
+    }
+
 }

@@ -59,6 +59,6 @@ class TicketAdapter(val context: Context, val resource: Int, val objects: ArrayL
         else {
             holder.tvStatus.text = "Pending"
         }
-
+//        notifyDataSetChanged()
     }
 }

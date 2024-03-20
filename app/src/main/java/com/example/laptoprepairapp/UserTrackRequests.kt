@@ -75,12 +75,14 @@ class UserTrackRequests : AppCompatActivity() {
                     }
                     if (ticketList.isEmpty()) {
                         progressBar.visibility = View.GONE
+                        tvLoadingData.visibility = View.VISIBLE
                         tvLoadingData.text = "No Record Found."
                     }
 
                 }
                 else {
                     progressBar.visibility = View.GONE
+                    tvLoadingData.visibility = View.VISIBLE
                     tvLoadingData.text = "No Record Found."
                 }
             }

@@ -118,7 +118,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="textEnd"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="30dp">
+            android:layout_marginBottom="20dp">
 
             <TextView
                 android:id="@+id/tv1"
@@ -136,5 +136,24 @@
                 android:textColor="@color/orange" />
 
         </RelativeLayout>
+
+<!--        <ProgressBar-->
+<!--            android:id="@+id/progressBar"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:visibility="gone"-->
+<!--            android:max="100"-->
+<!--            android:progress="0"-->
+<!--            android:indeterminate="true"-->
+<!--            android:layout_marginBottom="10dp" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/tvCheckEmailVerification"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:visibility="gone"-->
+<!--            android:text="Verifying your email..."-->
+<!--            android:layout_marginBottom="50dp"/>-->
+
     </LinearLayout>
 </ScrollView>
