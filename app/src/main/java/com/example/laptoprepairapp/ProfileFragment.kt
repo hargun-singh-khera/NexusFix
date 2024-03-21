@@ -79,6 +79,7 @@ class ProfileFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
         userId = auth.currentUser?.uid!!
+        Toast.makeText(requireContext(), "UserId: ${userId}", Toast.LENGTH_SHORT).show()
 
         dbRef = FirebaseDatabase.getInstance().getReference("Users")
         sharedPreferences = requireActivity().getSharedPreferences(fileName, Context.MODE_PRIVATE)

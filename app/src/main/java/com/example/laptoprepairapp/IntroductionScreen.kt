@@ -31,8 +31,12 @@ class IntroductionScreen : AppCompatActivity() {
             if (isAdmin) {
                 startActivity(Intent(this@IntroductionScreen, AdminDashboard::class.java))
             }
-            else {
+            else if (currentUser.isEmailVerified){
                 startActivity(Intent(this@IntroductionScreen, UserDashboard::class.java))
+            }
+            else {
+                startActivity(Intent(this@IntroductionScreen, LoginScreen::class.java))
+                Toast.makeText(this@IntroductionScreen, "Please verify your email", Toast.LENGTH_SHORT).show()
             }
             finish()
         }

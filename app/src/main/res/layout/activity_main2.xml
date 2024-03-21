@@ -62,6 +62,16 @@
             android:layout_marginEnd="20dp"
             android:layout_marginTop="20dp" />
 
+        <TextView
+            android:id="@+id/tvForgotPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forgot Password?"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="20dp"
+            android:textColor="@color/orange" />
+
         <Button
             android:id="@+id/btnSignin"
             android:layout_width="match_parent"
@@ -70,7 +80,7 @@
             android:background="@drawable/rounded_button"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginTop="40dp" />
+            android:layout_marginTop="20dp" />
 
         <RelativeLayout
             android:layout_width="wrap_content"

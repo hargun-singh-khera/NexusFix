@@ -28,6 +28,7 @@ class LoginScreen : AppCompatActivity() {
     var isAdmin: Boolean ?= false
     lateinit var sharedPreferences: SharedPreferences
     lateinit var progressBar: ProgressBar
+    lateinit var tvForgotPassword: TextView
     val fileName = "userType"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +39,7 @@ class LoginScreen : AppCompatActivity() {
         btnSignin = findViewById(R.id.btnSignin)
         tvRegister = findViewById(R.id.tvRegister)
         progressBar = findViewById(R.id.progressBar)
+        tvForgotPassword = findViewById(R.id.tvForgotPassword)
 
         auth = FirebaseAuth.getInstance()
         dbRef = FirebaseDatabase.getInstance().getReference("Users")
@@ -50,6 +52,11 @@ class LoginScreen : AppCompatActivity() {
 
         tvRegister.setOnClickListener {
             startActivity(Intent(this, RegisterScreen::class.java))
+            finish()
+        }
+
+        tvForgotPassword.setOnClickListener {
+            startActivity(Intent(this, ForgotPassword::class.java))
         }
     }
     private fun loginUser() {
@@ -115,4 +122,5 @@ class LoginScreen : AppCompatActivity() {
             }
         })
     }
+
 }
