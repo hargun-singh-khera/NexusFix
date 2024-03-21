@@ -87,9 +87,6 @@ class RegisterScreen : AppCompatActivity() {
             if (it.isSuccessful) {
                 val isEmailVerified = user.isEmailVerified
                 Toast.makeText(this@RegisterScreen, "Email Verified onResume: ${isEmailVerified}", Toast.LENGTH_SHORT).show()
-                val name = etName.text.toString()
-                val email = etEmail.text.toString()
-                val number = etMobileNumber.text.toString()
                 checkUserEmailVerification()
             }
         }
@@ -138,11 +135,8 @@ class RegisterScreen : AppCompatActivity() {
         val isEmailVerified = user?.isEmailVerified
         Toast.makeText(this@RegisterScreen, "Email verified: ${isEmailVerified}", Toast.LENGTH_SHORT).show()
         if (user != null && isEmailVerified!!) {
-            val userId = user.uid
-            // Verify user mobile number
             Toast.makeText(this@RegisterScreen, "User Email Verified", Toast.LENGTH_SHORT).show()
             verifyOtp()
-
         }
         else {
             Toast.makeText(this@RegisterScreen, "Please verify your email", Toast.LENGTH_SHORT).show()
@@ -179,9 +173,11 @@ class RegisterScreen : AppCompatActivity() {
                 val name = etName.text.toString()
                 val email = etEmail.text.toString()
                 val number = etMobileNumber.text.toString()
+                val userId = auth.currentUser?.uid
 
                 val intent = Intent(applicationContext,OTPVerification::class.java)
                 intent.putExtra("storedVerificationId", storedVerificationId)
+                intent.putExtra("userId", userId)
                 intent.putExtra("name", name)
                 intent.putExtra("email", email)
                 intent.putExtra("number", number)
