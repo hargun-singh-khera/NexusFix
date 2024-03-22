@@ -12,6 +12,10 @@
         android:title="Profile" />
 
     <item
+        android:id="@+id/resetPassword"
+        android:title="Reset Password" />
+
+    <item
         android:id="@+id/logout"
         android:title="Logout"
         android:icon="@drawable/baseline_logout_24" />

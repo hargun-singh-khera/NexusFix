@@ -44,11 +44,11 @@ class AdminUserManagement : AppCompatActivity() {
         userId = auth.currentUser?.uid!!
 
         userList = arrayListOf<UserModel>()
-        getAllTickets()
+        getAllUsers()
 
     }
 
-    private fun getAllTickets() {
+    private fun getAllUsers() {
         empRecyclerView.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
         tvLoadingData.visibility = View.GONE
@@ -72,11 +72,13 @@ class AdminUserManagement : AppCompatActivity() {
                         tvLoadingData.visibility = View.GONE
                     } else {
                         progressBar.visibility = View.GONE
+                        tvLoadingData.visibility = View.VISIBLE
                         tvLoadingData.text = "No Record Found."
                     }
                 }
                 else {
                     progressBar.visibility = View.GONE
+                    tvLoadingData.visibility = View.VISIBLE
                     tvLoadingData.text = "No Record Found."
                 }
             }

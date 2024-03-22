@@ -9,10 +9,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 class UserAdapter(val context: Context, val resource: Int, val objects: ArrayList<UserModel>, var dbRef: DatabaseReference) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
+    lateinit var auth: FirebaseAuth
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
         val imageView = itemView.findViewById<ImageView>(R.id.imageView)
@@ -25,6 +27,7 @@ class UserAdapter(val context: Context, val resource: Int, val objects: ArrayLis
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(resource, parent, false)
+        auth = FirebaseAuth.getInstance()
         return ViewHolder(view)
     }
 
@@ -41,7 +44,6 @@ class UserAdapter(val context: Context, val resource: Int, val objects: ArrayLis
         holder.btnDelete.setOnClickListener {
             deleteUser(position)
         }
-
     }
 
     private fun deleteUser(position: Int) {
@@ -53,6 +55,5 @@ class UserAdapter(val context: Context, val resource: Int, val objects: ArrayLis
         }.addOnFailureListener {
             Toast.makeText(context, "An Error Occurred " + it.message, Toast.LENGTH_SHORT).show()
         }
-        
     }
 }

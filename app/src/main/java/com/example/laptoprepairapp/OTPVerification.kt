@@ -1,9 +1,12 @@
 package com.example.laptoprepairapp
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -32,6 +35,7 @@ class OTPVerification : AppCompatActivity() {
     lateinit var storedVerificationId:String
     private lateinit var dbRef: DatabaseReference
     lateinit var sharedPreferences: SharedPreferences
+    lateinit var progressDialog: ProgressDialog
     val fileName = "userType"
 
     lateinit var etOtp1: EditText
@@ -87,6 +91,89 @@ class OTPVerification : AppCompatActivity() {
         }
     }
 
+    private fun showProgressBar() {
+        progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Verifying your OTP...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+    }
+
+    private fun hideProgressBar() {
+        progressDialog.dismiss()
+    }
+
+
+    private fun saveUserData(name: String, email: String, number: String) {
+        Toast.makeText(this@OTPVerification, "User details saved", Toast.LENGTH_SHORT).show()
+
+        Toast.makeText(this, "UserId: ${userId}", Toast.LENGTH_SHORT).show()
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isAdmin", false)
+        editor.putString("userName", name)
+        editor.apply()
+        val user = UserModel(userId, name, email, number, false)
+        dbRef.child(userId!!).setValue(user).addOnCompleteListener {
+            if (it.isSuccessful) {
+                Toast.makeText(this@OTPVerification, "User Registration Successful", Toast.LENGTH_SHORT).show()
+            }
+
+            finish()
+        }
+            .addOnFailureListener {
+                Toast.makeText(this@OTPVerification, "Error ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun verifyUserMobile() {
+        showProgressBar()
+        val et1 = etOtp1.text.toString()
+        val et2 = etOtp2.text.toString()
+        val et3 = etOtp3.text.toString()
+        val et4 = etOtp4.text.toString()
+        val et5 = etOtp5.text.toString()
+        val et6 = etOtp6.text.toString()
+
+        val otp = et1 + et2 + et3 + et4 + et5 + et6
+        Toast.makeText(this@OTPVerification, "OTP Entered: ${otp}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@OTPVerification, "Verify user mobile", Toast.LENGTH_SHORT).show()
+        val credential : PhoneAuthCredential = PhoneAuthProvider.getCredential(storedVerificationId, otp)
+        Toast.makeText(this@OTPVerification, "Credentials: ${credential}", Toast.LENGTH_SHORT).show()
+        signInWithPhoneAuthCredential(credential)
+    }
+
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
+        auth.currentUser?.linkWithCredential(credential)?.addOnCompleteListener {
+            if (it.isSuccessful) {
+                val name = intent.getStringExtra("name")!!
+                val email = intent.getStringExtra("email")!!
+                val number = intent.getStringExtra("number")!!
+                val pass = intent.getStringExtra("pass")!!
+
+                val editor = sharedPreferences.edit()
+                editor.putString("pass", pass)
+                Toast.makeText(this@OTPVerification, "OTP Password saved locally", Toast.LENGTH_SHORT).show()
+                editor.apply()
+
+                saveUserData(name, email, number)
+                hideProgressBar()
+                val intent = Intent(this@OTPVerification, UserDashboard::class.java)
+                startActivity(intent)
+                finish()
+            }
+            else {
+                // Verification failed, display a message and update the UI
+                if (it.exception is FirebaseAuthInvalidCredentialsException) {
+                    // The verification code entered was invalid
+                    Toast.makeText(this,"Invalid OTP", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
+
     private fun setupEditText(editText: EditText) {
         editText.setOnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
@@ -124,66 +211,5 @@ class OTPVerification : AppCompatActivity() {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             // Not used
         }
-    }
-
-    private fun saveUserData(name: String, email: String, number: String) {
-        Toast.makeText(this@OTPVerification, "User details saved", Toast.LENGTH_SHORT).show()
-
-        Toast.makeText(this, "UserId: ${userId}", Toast.LENGTH_SHORT).show()
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("isAdmin", false)
-        editor.putString("userName", name)
-        editor.apply()
-        val user = UserModel(userId, name, email, number, false)
-        dbRef.child(userId!!).setValue(user).addOnCompleteListener {
-            if (it.isSuccessful) {
-                Toast.makeText(this@OTPVerification, "User Registration Successful", Toast.LENGTH_SHORT).show()
-            }
-
-            finish()
-        }
-            .addOnFailureListener {
-                Toast.makeText(this@OTPVerification, "Error ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun verifyUserMobile() {
-        val et1 = etOtp1.text.toString()
-        val et2 = etOtp2.text.toString()
-        val et3 = etOtp3.text.toString()
-        val et4 = etOtp4.text.toString()
-        val et5 = etOtp5.text.toString()
-        val et6 = etOtp6.text.toString()
-
-        val otp = et1 + et2 + et3 + et4 + et5 + et6
-        Toast.makeText(this@OTPVerification, "OTP Entered: ${otp}", Toast.LENGTH_SHORT).show()
-        Toast.makeText(this@OTPVerification, "Verify user mobile", Toast.LENGTH_SHORT).show()
-        val credential : PhoneAuthCredential = PhoneAuthProvider.getCredential(storedVerificationId, otp)
-        Toast.makeText(this@OTPVerification, "Credentials: ${credential}", Toast.LENGTH_SHORT).show()
-        signInWithPhoneAuthCredential(credential)
-    }
-
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-//        auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
-//            if (task.isSuccessful) {
-                val name = intent.getStringExtra("name")!!
-                val email = intent.getStringExtra("email")!!
-                val number = intent.getStringExtra("number")!!
-                saveUserData(name, email, number)
-                val intent = Intent(this@OTPVerification, UserDashboard::class.java)
-                startActivity(intent)
-                finish()
-//            } else {
-//                // Sign in failed, display a message and update the UI
-//                if (task.exception is FirebaseAuthInvalidCredentialsException) {
-//                    // The verification code entered was invalid
-//                    Toast.makeText(this,"Invalid OTP", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//        }
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
     }
 }

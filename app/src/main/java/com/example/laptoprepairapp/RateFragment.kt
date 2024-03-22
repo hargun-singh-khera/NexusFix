@@ -1,5 +1,6 @@
 package com.example.laptoprepairapp
 
+import android.app.ProgressDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -16,34 +17,43 @@ import com.google.android.material.snackbar.Snackbar
 
 
 class RateFragment : Fragment() {
+    lateinit var progressDialog: ProgressDialog
+    lateinit var ratingBar: RatingBar
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         val view=  inflater.inflate(R.layout.fragment_rate, container, false)
-        val ratingBar = view.findViewById<RatingBar>(R.id.ratingBar)
+        ratingBar = view.findViewById(R.id.ratingBar)
         val btnSendRating = view.findViewById<Button>(R.id.btnSendRating)
-        val progressBar =  view.findViewById<ProgressBar>(R.id.progressBar)
-        val sendingRatingTextView = view.findViewById<TextView>(R.id.sendingRatingTextView)
 
         btnSendRating.setOnClickListener {
-            sendingRatingTextView.setText("Sending your rating ${ratingBar.rating}/${ratingBar.numStars} ...")
-            progressBar.visibility=View.VISIBLE
-
+            showProgressBar()
             Handler(Looper.getMainLooper()).postDelayed({
-                progressBar.visibility=View.INVISIBLE
-                sendingRatingTextView.setText(null)
+                hideProgressBar()
                 val snackbar = Snackbar.make(it, "Rating sent successfully", Snackbar.LENGTH_LONG)
                 snackbar.setAction("Ok") {
 
                 }
-                snackbar.setActionTextColor(Color.WHITE)
-                snackbar.setBackgroundTint(resources.getColor(R.color.blue))
+                snackbar.setTextColor(resources.getColor(R.color.white))
+                snackbar.setActionTextColor(resources.getColor(R.color.orange))
+                snackbar.setBackgroundTint(resources.getColor(R.color.black))
                 snackbar.show()
             },2600)
         }
 
         return view
+    }
+
+    private fun showProgressBar() {
+        progressDialog = ProgressDialog(requireActivity())
+        progressDialog.setMessage("Sending your rating ${ratingBar.rating}/${ratingBar.numStars}...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+    }
+
+    private fun hideProgressBar() {
+        progressDialog.dismiss()
     }
 }

@@ -1,10 +1,13 @@
 package com.example.laptoprepairapp
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -27,7 +30,7 @@ class LoginScreen : AppCompatActivity() {
     lateinit var dbRef: DatabaseReference
     var isAdmin: Boolean ?= false
     lateinit var sharedPreferences: SharedPreferences
-    lateinit var progressBar: ProgressBar
+    lateinit var progressDialog: ProgressDialog
     lateinit var tvForgotPassword: TextView
     val fileName = "userType"
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,13 +41,15 @@ class LoginScreen : AppCompatActivity() {
         etPass = findViewById(R.id.etPass)
         btnSignin = findViewById(R.id.btnSignin)
         tvRegister = findViewById(R.id.tvRegister)
-        progressBar = findViewById(R.id.progressBar)
+
         tvForgotPassword = findViewById(R.id.tvForgotPassword)
 
         auth = FirebaseAuth.getInstance()
         dbRef = FirebaseDatabase.getInstance().getReference("Users")
 
         sharedPreferences = getSharedPreferences(fileName , Context.MODE_PRIVATE)
+
+        progressDialog = ProgressDialog(this)
 
         btnSignin.setOnClickListener {
             loginUser()
@@ -59,6 +64,15 @@ class LoginScreen : AppCompatActivity() {
             startActivity(Intent(this, ForgotPassword::class.java))
         }
     }
+
+    private fun showProgressBar() {
+        progressDialog.setMessage("Loading....")
+    }
+
+    private fun hideProgressBar() {
+        progressDialog.dismiss()
+    }
+
     private fun loginUser() {
         val email = etEmail.text.toString()
         val pass = etPass.text.toString()
@@ -66,7 +80,11 @@ class LoginScreen : AppCompatActivity() {
             Toast.makeText(this, "All fields are mandatory", Toast.LENGTH_SHORT).show()
         }
         else {
-            progressBar.visibility = View.VISIBLE
+            showProgressBar()
+            // used for delay
+            Handler(Looper.getMainLooper()).postDelayed({
+                progressDialog.setMessage("Checking your credentials...")
+            },300)
             auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
                 if(it.isSuccessful) {
                     val currentUser = auth.currentUser
@@ -74,12 +92,12 @@ class LoginScreen : AppCompatActivity() {
                         val isEmailVerified = auth.currentUser?.isEmailVerified
                         if (isEmailVerified!!) {
                             checkUserAndLogin(email)
-                            progressBar.visibility = View.GONE
+                            hideProgressBar()
                         }
                         else {
                             etEmail.text.clear()
                             etPass.text.clear()
-                            progressBar.visibility = View.GONE
+                            hideProgressBar()
                             Toast.makeText(this@LoginScreen, "Please verify your email to continue", Toast.LENGTH_SHORT).show()
                         }
                     }
@@ -89,6 +107,8 @@ class LoginScreen : AppCompatActivity() {
                     etEmail.text.clear()
                     etPass.text.clear()
                 }
+            }.addOnFailureListener {
+                Toast.makeText(this@LoginScreen, "Unable to sign in.", Toast.LENGTH_SHORT).show()
             }
         }
     }

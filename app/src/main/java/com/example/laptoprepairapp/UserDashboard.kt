@@ -22,11 +22,10 @@ import com.google.firebase.messaging.FirebaseMessaging
 
 class UserDashboard : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
-    lateinit var sharedPreferences: SharedPreferences
     lateinit var bottomNavigationView: BottomNavigationView
     lateinit var fab: FloatingActionButton
     lateinit var toolbar: Toolbar
-    val fileName = "userType"
+    lateinit var pass: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.user_dashboard)
@@ -60,6 +59,9 @@ class UserDashboard : AppCompatActivity() {
             R.id.profile -> {
                 replaceFrameWithFragment(ProfileFragment())
                 toolbar.setTitle("My Profile")
+            }
+            R.id.resetPassword -> {
+                startActivity(Intent(this@UserDashboard, ResetPassword::class.java))
             }
             R.id.logout -> {
                 logoutAlert()

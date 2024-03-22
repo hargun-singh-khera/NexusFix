@@ -1,16 +1,17 @@
 package com.example.laptoprepairapp
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -35,16 +36,13 @@ class RegisterScreen : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     private lateinit var dbRef: DatabaseReference
     lateinit var sharedPreferences: SharedPreferences
-    lateinit var progressBar: ProgressBar
-    lateinit var tvCheckEmailVerification: TextView
+    lateinit var progressDialog: ProgressDialog
 
     lateinit var storedVerificationId:String
     lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
     private lateinit var callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
     val fileName = "userType"
 
-    lateinit var layout1: RelativeLayout
-    lateinit var layout2: RelativeLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,11 +56,7 @@ class RegisterScreen : AppCompatActivity() {
         btnSignup = findViewById(R.id.btnSignup)
         tvLogin = findViewById(R.id.tvLogin)
 
-        layout1 = findViewById(R.id.layout1)
-        layout2 = findViewById(R.id.layout2)
-
-        progressBar = findViewById(R.id.progressBar)
-        tvCheckEmailVerification = findViewById(R.id.tvCheckEmailVerification)
+        progressDialog = ProgressDialog(this)
         auth = FirebaseAuth.getInstance()
         dbRef = FirebaseDatabase.getInstance().getReference("Users")
         sharedPreferences = getSharedPreferences(fileName , Context.MODE_PRIVATE)
@@ -124,14 +118,23 @@ class RegisterScreen : AppCompatActivity() {
         }
     }
 
+    private fun showProgressBar() {
+        progressDialog.setMessage("Email Verification Sent....")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+    }
+
+    private fun hideProgressBar() {
+        progressDialog.dismiss()
+    }
 
 
     private fun checkUserEmailVerification() {
         val user = auth.currentUser
-        layout1.visibility = View.GONE
-        layout2.visibility = View.VISIBLE
-        progressBar.visibility = View.VISIBLE
-        tvCheckEmailVerification.visibility = View.VISIBLE
+        showProgressBar()
+        Handler(Looper.getMainLooper()).postDelayed({
+            progressDialog.setMessage("Verifying for your email....")
+        },1000)
         val isEmailVerified = user?.isEmailVerified
         Toast.makeText(this@RegisterScreen, "Email verified: ${isEmailVerified}", Toast.LENGTH_SHORT).show()
         if (user != null && isEmailVerified!!) {
@@ -151,8 +154,7 @@ class RegisterScreen : AppCompatActivity() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                 Log.d("Verification Status", "Verification Completed")
                 Toast.makeText(this@RegisterScreen, "Verification Completed", Toast.LENGTH_SHORT).show()
-                progressBar.visibility = View.GONE
-                tvCheckEmailVerification.visibility = View.GONE
+                hideProgressBar()
 
                 startActivity(Intent(this@RegisterScreen, UserDashboard::class.java))
                 finish()
@@ -168,11 +170,13 @@ class RegisterScreen : AppCompatActivity() {
                 Toast.makeText(this@RegisterScreen, "Code sent", Toast.LENGTH_SHORT).show()
                 storedVerificationId = verificationId
                 resendToken = token
-                tvCheckEmailVerification.text = "Sending OTP to your number..."
+                progressDialog.setMessage("Sending OTP to your number...")
                 // Start a new activity using intent also send the storedVerificationId using intent we will use this id to send the otp back to firebase
                 val name = etName.text.toString()
                 val email = etEmail.text.toString()
                 val number = etMobileNumber.text.toString()
+                val pass = etPass.text.toString()
+                Toast.makeText(this@RegisterScreen, "Password: ${pass}", Toast.LENGTH_SHORT).show()
                 val userId = auth.currentUser?.uid
 
                 val intent = Intent(applicationContext,OTPVerification::class.java)
@@ -181,6 +185,7 @@ class RegisterScreen : AppCompatActivity() {
                 intent.putExtra("name", name)
                 intent.putExtra("email", email)
                 intent.putExtra("number", number)
+                intent.putExtra("pass", pass)
 
                 etName.text.clear()
                 etEmail.text.clear()

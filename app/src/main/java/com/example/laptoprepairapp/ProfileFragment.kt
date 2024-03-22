@@ -15,6 +15,7 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import android.provider.Settings
 import android.text.InputType
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -30,22 +31,35 @@ import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.FirebaseException
+import com.google.firebase.auth.EmailAuthCredential
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.ktx.oAuthProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class ProfileFragment : Fragment() {
+    lateinit var tvName: TextView
+    lateinit var tvEmail: TextView
+    lateinit var tvMobile: TextView
     private lateinit var emailEditText: EditText
     private lateinit var nameEditText: EditText
     private lateinit var mobileEditText: EditText
     private lateinit var editProfileButton: Button
     private lateinit var myLocation: TextView
-    private lateinit var logoutButton: Button
     lateinit var progressBar: ProgressBar
+    lateinit var progressBar3: ProgressBar
+    lateinit var tvProgressBar: TextView
     lateinit var layout: RelativeLayout
     lateinit var sharedPreferences: SharedPreferences
 
@@ -68,14 +82,19 @@ class ProfileFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
+        tvName = view.findViewById(R.id.tvName)
+        tvEmail = view.findViewById(R.id.tvEmail)
+        tvMobile = view.findViewById(R.id.tvMobile)
         emailEditText = view.findViewById(R.id.emailEditText)
         nameEditText = view.findViewById(R.id.nameEditText)
         mobileEditText = view.findViewById(R.id.mobileEditText)
         editProfileButton = view.findViewById(R.id.editProfileButton)
         myLocation = view.findViewById(R.id.myLocation)
-        logoutButton = view.findViewById(R.id.logoutButton)
+
         progressBar = view.findViewById(R.id.progressBar)
-//        layout = view.findViewById(R.id.layout)
+        progressBar3 = view.findViewById(R.id.progressBar3)
+        tvProgressBar = view.findViewById(R.id.tvProgressBar)
+        layout = view.findViewById(R.id.layout)
 
         auth = FirebaseAuth.getInstance()
         userId = auth.currentUser?.uid!!
@@ -87,8 +106,10 @@ class ProfileFragment : Fragment() {
         getAllUserData()
 
         editProfileButton.setOnClickListener {
+//            inEditMode = !inEditMode
             if (inEditMode) {
                 inEditMode = false
+                Toast.makeText(requireContext(), "inEditMode1: ${inEditMode}", Toast.LENGTH_SHORT).show()
                 editProfileButton.text = "Edit Profile"
 
                 nameEditText.isEnabled = false
@@ -103,27 +124,28 @@ class ProfileFragment : Fragment() {
                 val email = emailEditText.text.toString()
                 val mobile = mobileEditText.text.toString()
                 updateUserDetails(name, email, mobile)
+
+
             } else {
                 inEditMode = true
+                Toast.makeText(requireContext(), "inEditMode2: ${inEditMode}", Toast.LENGTH_SHORT).show()
                 editProfileButton.text = "Save Profile"
 
                 nameEditText.isEnabled = true
-                emailEditText.isEnabled = true
-                mobileEditText.isEnabled = true
+//                emailEditText.isEnabled = true
+//                mobileEditText.isEnabled = true
 
                 nameEditText.isFocusable = true
-                emailEditText.isFocusable = true
-                mobileEditText.isFocusable = true
+//                emailEditText.isFocusable = true
+//                mobileEditText.isFocusable = true
 
                 nameEditText.isFocusableInTouchMode = true
-                emailEditText.isFocusableInTouchMode = true
-                mobileEditText.isFocusableInTouchMode = true
+//                emailEditText.isFocusableInTouchMode = true
+//                mobileEditText.isFocusableInTouchMode = true
+
             }
         }
 
-        logoutButton.setOnClickListener {
-            exitAlert()
-        }
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
 
@@ -132,6 +154,23 @@ class ProfileFragment : Fragment() {
 
         return view
     }
+
+    private fun checkUserEmailVerification(name: String, email: String, mobile: String) {
+        Toast.makeText(requireContext(), "Check Email Verification Method", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "inEditMode: ${inEditMode}", Toast.LENGTH_SHORT).show()
+        val currentUser = auth.currentUser
+        Toast.makeText(requireContext(), "Current User Email Verified: ${currentUser?.isEmailVerified}", Toast.LENGTH_SHORT).show()
+        if (currentUser != null && currentUser.isEmailVerified) {
+            Toast.makeText(requireContext(), "Email Verified of Current User", Toast.LENGTH_SHORT).show()
+//                updateUserDetails(name, email, mobile)
+            showView()
+            Toast.makeText(requireContext(), "Show view called", Toast.LENGTH_SHORT).show()
+            editProfileButton.text = "Edit Profile"
+        } else {
+            Toast.makeText(requireContext(), "Please verify your email", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     private fun updateUserDetails(name: String, email: String, mobile: String) {
         val edit = sharedPreferences.edit()
@@ -146,12 +185,38 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    fun getAllUserData() {
-//        layout.visibility = View.GONE
+    private fun hideView() {
+        tvName.visibility = View.GONE
+        tvEmail.visibility = View.GONE
+        tvMobile.visibility = View.GONE
+        nameEditText.visibility = View.GONE
+        emailEditText.visibility = View.GONE
+        mobileEditText.visibility = View.GONE
+        editProfileButton.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
+        tvProgressBar.visibility = View.VISIBLE
+    }
+
+    private fun showView() {
+        progressBar.visibility = View.GONE
+        tvProgressBar.visibility = View.GONE
+        tvName.visibility = View.VISIBLE
+        tvEmail.visibility = View.VISIBLE
+        tvMobile.visibility = View.VISIBLE
+        nameEditText.visibility = View.VISIBLE
+        emailEditText.visibility = View.VISIBLE
+        mobileEditText.visibility = View.VISIBLE
+        editProfileButton.visibility = View.VISIBLE
+    }
+
+    fun getAllUserData() {
+        hideView()
+        Toast.makeText(requireContext(), "Acquiring User Info", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "User Id: ${userId}", Toast.LENGTH_SHORT).show()
         dbRef.child(userId).addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
+                    Toast.makeText(requireContext(), "Snapshot exists", Toast.LENGTH_SHORT).show()
                     for (userSnap in snapshot.children) {
                         val user = snapshot.getValue(UserModel::class.java)
                         userName = user?.userName!!
@@ -162,8 +227,8 @@ class ProfileFragment : Fragment() {
                         emailEditText.setText(userEmail)
                         mobileEditText.setText(userMobileNumber)
 
-                        progressBar.visibility = View.GONE
-//                        layout.visibility = View.VISIBLE
+                        Toast.makeText(requireContext(), "Values set", Toast.LENGTH_SHORT).show()
+                        showView()
                     }
                 }
             }
@@ -174,27 +239,9 @@ class ProfileFragment : Fragment() {
         })
     }
 
-    fun exitAlert() {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setMessage("Are you sure you want to logout ?")
-        builder.setTitle("Logout Alert!")
-        builder.setCancelable(false)
-        builder.setPositiveButton("Yes") {
-                dialog, which -> logoutRedirect()
-        }
-        builder.setNegativeButton("No") {
-                dialog, which -> dialog.cancel()
-        }
-        val alertDialog = builder.create()
-        alertDialog.show()
-    }
-
-    private fun logoutRedirect() {
-        val intent = Intent(requireActivity(), LoginScreen::class.java)
-        startActivity(intent)
-    }
-
     private fun getLocation() {
+        myLocation.visibility = View.GONE
+        progressBar3.visibility = View.VISIBLE
         if (checkPermission()) {
             if (isLocationEnabled()) {
                 mFusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
@@ -204,6 +251,8 @@ class ProfileFragment : Fragment() {
                         list = geocoder.getFromLocation(location.latitude, location.longitude, 1)
                         if (list != null) {
                             if (list.isNotEmpty()) {
+                                progressBar3.visibility = View.GONE
+                                myLocation.visibility = View.VISIBLE
                                 myLocation.text = "${list[0].getAddressLine(0)}"
                             }
                         }
